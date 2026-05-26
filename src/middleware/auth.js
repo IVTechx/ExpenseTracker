@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'change_this_in_production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if(!JWT_SECRET)
+  throw new Error("Missing JWT_SECRET. Set it in your .env file")
 
 function authenticate(req, res, next) {
   const authHeader = req.headers['authorization'];

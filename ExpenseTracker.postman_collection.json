@@ -24,9 +24,57 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"pass1234\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/signup", "host": ["{{baseUrl}}"], "path": ["auth","signup"] }
-          },
-          "response": []
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Signup - Invalid Email Format (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"notanemail\",\n  \"password\": \"pass1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Signup - Missing Password (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"user@example.com\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Signup - Password Too Short (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user2@example.com\",\n  \"password\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          }
         },
         {
           "name": "Signup - Duplicate Email (409)",
@@ -37,7 +85,11 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"pass1234\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/signup", "host": ["{{baseUrl}}"], "path": ["auth","signup"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
           }
         },
         {
@@ -60,7 +112,11 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"pass1234\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
           }
         },
         {
@@ -83,7 +139,11 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@tracker.com\",\n  \"password\": \"Admin@1234\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
           }
         },
         {
@@ -95,7 +155,51 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"wrongpassword\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Non-existent User (401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ghost@example.com\",\n  \"password\": \"pass1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Rate Limit Test (send 21+ times to trigger 429)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ghost@example.com\",\n  \"password\": \"wrongpass\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - No Token on Protected Route (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/expenses", "host": ["{{baseUrl}}"], "path": ["expenses"] }
           }
         }
       ]
@@ -130,6 +234,21 @@
           }
         },
         {
+          "name": "Create Expense - Title Too Long (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{userToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n  \"amount\": 10,\n  \"category\": \"Groceries\",\n  \"date\": \"2026-05-20\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/expenses", "host": ["{{baseUrl}}"], "path": ["expenses"] }
+          }
+        },
+        {
           "name": "Create Expense - Invalid Category (400)",
           "request": {
             "method": "POST",
@@ -139,7 +258,37 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Random\",\n  \"amount\": 10,\n  \"category\": \"InvalidCat\",\n  \"date\": \"2026-05-20\"\n}"
+              "raw": "{\n  \"title\": \"Something\",\n  \"amount\": 10,\n  \"category\": \"InvalidCat\",\n  \"date\": \"2026-05-20\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/expenses", "host": ["{{baseUrl}}"], "path": ["expenses"] }
+          }
+        },
+        {
+          "name": "Create Expense - Negative Amount (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{userToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Bad Amount\",\n  \"amount\": -50,\n  \"category\": \"Groceries\",\n  \"date\": \"2026-05-20\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/expenses", "host": ["{{baseUrl}}"], "path": ["expenses"] }
+          }
+        },
+        {
+          "name": "Create Expense - Invalid Date (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{userToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Bad Date\",\n  \"amount\": 20,\n  \"category\": \"Groceries\",\n  \"date\": \"not-a-date\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/expenses", "host": ["{{baseUrl}}"], "path": ["expenses"] }
           }
@@ -209,6 +358,19 @@
           }
         },
         {
+          "name": "Get Expenses - Custom Filter Missing Dates (400)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/expenses?filter=custom",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses"],
+              "query": [{ "key": "filter", "value": "custom" }]
+            }
+          }
+        },
+        {
           "name": "Update Expense",
           "request": {
             "method": "PUT",
@@ -218,25 +380,53 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Monthly Groceries\",\n  \"amount\": 120.00\n}"
+              "raw": "{\n  \"title\": \"Updated Groceries\",\n  \"amount\": 120.00\n}"
             },
-            "url": { "raw": "{{baseUrl}}/expenses/{{expenseId}}", "host": ["{{baseUrl}}"], "path": ["expenses","{{expenseId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "{{expenseId}}"]
+            }
           }
         },
         {
-          "name": "Delete Expense (own)",
+          "name": "Update Expense - Not Found (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{userToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 50\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/expenses/exp_doesnotexist",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "exp_doesnotexist"]
+            }
+          }
+        },
+        {
+          "name": "Delete Expense",
           "request": {
             "method": "DELETE",
             "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
-            "url": { "raw": "{{baseUrl}}/expenses/{{expenseId}}", "host": ["{{baseUrl}}"], "path": ["expenses","{{expenseId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "{{expenseId}}"]
+            }
           }
         },
         {
-          "name": "No Token - 401",
+          "name": "Delete Expense - Not Found (404)",
           "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "{{baseUrl}}/expenses", "host": ["{{baseUrl}}"], "path": ["expenses"] }
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/expenses/exp_doesnotexist",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "exp_doesnotexist"]
+            }
           }
         }
       ]
@@ -249,7 +439,11 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin","users"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"]
+            }
           }
         },
         {
@@ -257,23 +451,59 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/admin/expenses", "host": ["{{baseUrl}}"], "path": ["admin","expenses"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/expenses",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "expenses"]
+            }
           }
         },
         {
-          "name": "Admin Delete Any Expense",
+          "name": "Admin Force Delete Expense",
           "request": {
             "method": "DELETE",
             "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/admin/expenses/{{expenseId}}", "host": ["{{baseUrl}}"], "path": ["admin","expenses","{{expenseId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/expenses/{{expenseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "expenses", "{{expenseId}}"]
+            }
           }
         },
         {
-          "name": "User Accessing Admin Route - 403",
+          "name": "Admin Delete - Not Found (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/admin/expenses/exp_doesnotexist",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "expenses", "exp_doesnotexist"]
+            }
+          }
+        },
+        {
+          "name": "User Accessing Admin Route (403)",
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
-            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin","users"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"]
+            }
+          }
+        },
+        {
+          "name": "Admin Route - No Token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"]
+            }
           }
         }
       ]
