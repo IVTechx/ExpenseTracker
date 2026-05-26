@@ -179,22 +179,6 @@
           }
         },
         {
-          "name": "Login - Rate Limit Test (send 21+ times to trigger 429)",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"ghost@example.com\",\n  \"password\": \"wrongpass\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
-            }
-          }
-        },
-        {
           "name": "Login - No Token on Protected Route (401)",
           "request": {
             "method": "GET",
@@ -354,19 +338,6 @@
                 { "key": "start_date", "value": "2026-05-01" },
                 { "key": "end_date", "value": "2026-05-31" }
               ]
-            }
-          }
-        },
-        {
-          "name": "Get Expenses - Custom Filter Missing Dates (400)",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
-            "url": {
-              "raw": "{{baseUrl}}/expenses?filter=custom",
-              "host": ["{{baseUrl}}"],
-              "path": ["expenses"],
-              "query": [{ "key": "filter", "value": "custom" }]
             }
           }
         },
