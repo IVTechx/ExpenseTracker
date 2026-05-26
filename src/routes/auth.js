@@ -24,7 +24,10 @@ router.post("/signup", async (req, res) => {
   if (password.length < 6) {
     return res.status(400).json({ error: "Password must be at least 6 characters." });
   }
-
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
   const users = readUsers();
   if (users.find((u) => u.email === email)) {
     return res.status(409).json({ error: "Email already registered." });
@@ -53,8 +56,8 @@ router.post("/login", loginLimiter, async (req, res) => {
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailRegex.test(email)){
-    return res.status(400).json({error: 'Invalid email format'});
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
   }
 
   const users = readUsers();
